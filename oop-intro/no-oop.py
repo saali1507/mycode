@@ -4,6 +4,7 @@ import random
 player1_dice = []
 player2_dice = []
 
+# rolls the die 3 times and randomly gets a number between 1 and 6
 for i in range(3):
     player1_dice.append(random.randint(1,6))
     player2_dice.append(random.randint(1,6))
