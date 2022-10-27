@@ -5,45 +5,44 @@
         
 def introduction(Greeting): 
    content = TextField()
+   print('Welcome to Food Diary')
    timestamp = DateTimeField(default=datetime.datetime.now)
-
-def initialize(passphrase):
-   db.init('diary.db', passphrase=passphrase, kdf_iter=64000)
-   Entry.create_table()
 
 def menu_loop():
   choice = None
   while choice != 'q':
      for key, value in menu.items():
          print('%s) %s' % (key, value.__doc__))
-        choice = raw_input('Action: ').lower().strip()
+     choice = raw_input('Action: ').lower().strip()
      if choice in menu:
          menu[choice]()
 
-def add_entry():
-    """Add entry"""
+     def add_entry():
+        print('Add entry:')
+        add_entry = input()
+        """Add entry"""
 
-def view_entries(search_query=None):
-    """View previous entries"""
+     def view_entries(search_query=None):
+        """View previous entries"""
 
-def search_entries():
-    """Search entries"""
+     def search_entries():
+        """Search entries"""
 
-menu = OrderedDict([
-    ('a', add_entry),
-    ('v', view_entries),
-    ('s', search_entries),
+     menu = OrderedDict([
+     ('a', add_entry),
+     ('v', view_entries),
+     ('s', search_entries),
 ])
 
 if __name__ == '__main__':
 
-def add_entry():
-    """Add entry"""
-    print('Enter your entry. Press ctrl+d when finished.')
-    data = sys.stdin.read().strip()
-    if data and raw_input('Save entry? [Yn] ') != 'n':
-        Entry.create(content=data)
-        print('Saved successfully.')
+    def add_entry():
+        """Add entry"""
+        print('Enter your entry. Press ctrl+d when finished.')
+        data = sys.stdin.read().strip()
+        if data and raw_input('Save entry? [Yn] ') != 'n':
+            Entry.create(content=data)
+            print('Saved successfully.')
 
 def view_entries(search_query=None):
     """View previous entries"""
