@@ -6,7 +6,7 @@ from art import *
 
 
 def showInstructions():
-    """Show the game instructions when called"""
+    """Show the game intro"""
     #print a main menu and the commands
     
     tprint('''
@@ -16,56 +16,68 @@ def showInstructions():
     print('''The GOAL is to make it back to EARTH''')
 
     print('''Commands:
-      go [direction]
-      get [item] 
+      go [direction] 
     ''')
 
 def showStatus():
-    """determine the current status of the player"""
+    """current status of the player"""
     # print the player's current location
     print('---------------------------')
-    print('You are on an ' + currentRoom)
-    # print what the player must do to escape
+    print('You are on ' + currentRoom)
+    # print what the user must do to return
     print('You must answer riddles correctly to navigate back to Earth')
-    # check if there's an item in the room, if so print it
+    # if there is an item in the room print the riddle
     if "item" in rooms[currentRoom]:
-      print('You see a ' + rooms[currentRoom]['item'])
+      print('You are on ' + currentRoom)
     print("---------------------------")
 
+# create a class for riddles for reference in loop
+class Question:
+    def __init__(self, questionText, answer):
+        self.questionText = questionText
+        self.answer = answer
 
-# an inventory, which is initially empty
-inventory = []
+    # represent the riddle as a string
+    def __repr__(self):
+        return '{'+ self.questionText +', '+ self.answer +'}'
+
+# create a list of riddles for specific planets
+itemQuestions = [
+    Question("Riddle 1. I can be full even though I haven\'t eaten anything", "Moon")]
+
+itemQuestionsB = [
+    Question("Riddle 2. I am a red planet, but almost never warm", "Mars")]
+
+itemQuestionsC = [
+    Question("Riddle 3. I have many rings, but never been married", "Saturn")
+]
 
 
 # a dictionary linking a room to other rooms
 rooms = {
 
             'Unknown Moon' : {
-                  'south' : 'Kitchen',
                   'east' : 'Venus'
                 },
 
             'Venus' : {
+                  'west' : 'Unknown Moon',
                   'south' : 'Mercury',
-                  'east' : 'Saturn',
-                  'item' : 'monster',
                 },
-            'Saturn' : {
-                 'west' : 'Venus'
-    },
+
             'Mercury' : {
                   'west' : 'Earth',
-                  'east' : 'Mars',
                   'north' : 'Venus',
-                  'item' : 'potion'
+                  'item' : itemQuestions
                 },
-            'Garden' : {
-                  'north' : 'Dining Room'
-                },
+
+            'Earth' : {
+                  'east' : 'Mercury'
          }
 
+     }
 
-# start the player in the Hall
+# start the player on the Unknown Moon
 currentRoom = 'Unknown Moon'
 
 showInstructions()
@@ -74,55 +86,41 @@ showInstructions()
 while True:
     showStatus()
 
-    # the player MUST type something in
-    # otherwise input will keep asking
+    # user will type in direction they move in
     move = ''
     while move == '':
         move = input('>')
 
     # normalizing input:
-    # .lower() makes it lower case, .split() turns it to a list
-    # therefore, "get golden key" becomes ["get", "golden key"]          
+    # .lower() makes it lower case, .split() turns it to a list          
     move = move.lower().split(" ", 1)
 
-    #if they type 'go' first
+
+    # if they type 'go' first
     if move[0] == 'go':
-        #check that they are allowed wherever they want to go
+                #check that they are allowed wherever they want to go
         if move[1] in rooms[currentRoom]:
-            #print riddle
-            print('I can be full even though I haven\'t eaten anything')
-            userChoice = input()
-            if userChoice == "moon":
-                print('Correct')
             #set the current room to the new room
             currentRoom = rooms[currentRoom][move[1]]
         # if they aren't allowed to go that way:
         else:
-            print('You can\'t go that way!')
+            print('Wrong way!')
 
-    #if they type 'get' first
-    if move[0] == 'get' :
-        # make two checks:
-        # 1. if the current room contains an item
-        # 2. if the item in the room matches the item the player wishes to get
-        if "item" in rooms[currentRoom] and move[1] in rooms[currentRoom]['item']:
-            #add the item to their inventory
-            inventory.append(move[1])
-            #display a helpful message
-            print(move[1] + ' got!')
-            #delete the item key:value pair from the room's dictionary
-            del rooms[currentRoom]['item']
-        # if there's no item in the room or the item doesn't match
-        else:
-            #tell them they can't get it
-            print('Can\'t get ' + move[1] + '!')
-
-    ## If a player enters a room with a monster
-    if 'item' in rooms[currentRoom] and 'monster' in rooms[currentRoom]['item']:
-        print('A monster has got you... GAME OVER!')
-        break
+    ## if you land on a planet with a riddle
+    if 'item' in rooms[currentRoom]:
+        # link question and prompt riddle:
+        for question in itemQuestions:
+            print(f"{question.questionText}?")
+            # user input answer
+            userChoice = input()
+            if (userChoice.lower() == question.answer.lower()):
+            # if correct move to the next planet
+                print("That is correct!")
+            else:
+                print('Wrong')
+            break
 
     ## Define how a player can win
-    if currentRoom == 'Garden' and 'key' in inventory and 'potion' in inventory:
-        print('You escaped the house with the ultra rare key and magic potion... YOU WIN!')
+    if currentRoom == 'Earth':
+        print('You have made it back to earth!')
         break
